@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import optparse
+import argparse
 from socket import *
 
 #simple function to scan target:port(s) and display received banner
@@ -14,6 +14,7 @@ def connScan(tgtHost, tgtPort):
         connSock.close()
     except:
         print('[-]%d/tcp closed'% tgtPort)
+
 #simple function to resolve hostname if required
 def portScan(tgtHost, tgtPorts):
     try:
@@ -27,25 +28,27 @@ def portScan(tgtHost, tgtPorts):
         print("\n[+] Scan results for: " + tgtName[0])
     except:
         print("\n[+] Scan results for: " + tgtIP)
+
 #loop to iterate through list of ports to scan
     setdefaulttimeout(1)
     for tgtPort in tgtPorts:
         print("Scanning port " + tgtPort)
         connScan(tgtHost, int(tgtPort))
+
 #argument parser to construct help menu and handle user supplied values
 def main():
-    parser = optparse.OptionParser('usage %prog -t' +\
-        '<target host> -p <target port>')
-    parser.add_option('-t', dest='tgtHost', type='string', \
-        help='specify target host')
-    parser.add_option('-p', dest='tgtPort', type='string', \
-        help='specify target port[s] separated by comma')
-    (options, args) = parser.parse_args()
-    tgtHost = options.tgtHost
-    tgtPorts = str(options.tgtPort).split(', ')
+    parser = argparse.ArgumentParser(description='scan a host for running services')
+    parser.add_argument('-u', '--url', dest='tgtHost', type=str, required=True, help='provide a target url, or address example: www.website.com')
+    parser.add_argument('-v', '--version', dest='ver', required=False, action='store_true', help='display version number.')
+    parser.add_argument('-p', '--ports', dest='tgtPort', type=str, required=True, help='provide a port or comma separated list')
+    args = parser.parse_args()
+    tgtHost = args.tgtHost
+    tgtPorts = str(args.tgtPort).split(', ')
+
     if (tgtHost == None) | (tgtPorts[0] == None):
         print('[-] You must specify a target host and port[s]')
         exit(0)
     portScan(tgtHost, tgtPorts)
+    
 if __name__ == '__main__':
     main()
