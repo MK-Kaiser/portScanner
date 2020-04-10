@@ -1,4 +1,8 @@
 #!/usr/bin/env python3
+# Author: Mark Kaiser
+# Date: 12/08/2019
+# Description: Basic tcp port scanner.
+
 import argparse
 from socket import *
 
